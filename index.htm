@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./output.css">
+</head>
+<body>
+  <div>
+    <div class="">
+      <label for="price" class=" w-2 block text-sm font-medium leading-6 text-gray-900">Price</label>
+      <div class="relative mt-2 rounded-md shadow-sm">
+        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <span class="text-gray-500 sm:text-sm"></span>
+        </div>
+        <input type="text" name="price" id="price" class="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Country ...">
+        <div class="absolute inset-y-0 right-0 flex items-center">
+          <label for="currency" class="sr-only"></label>
+          <select id="currency" name="currency" class="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div>
+        <div class="relative mt-2 rounded-md shadow-sm">
+          <div class="absolute inset-y-0 right-0 flex items-center">
+            <label for="currency" class="sr-only">Currency</label>
+            <select id="regionSelect" name="currency" class="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
+              <option class="option"></option>
+            </select>
+          </div>
+        </div>
+      </div>  
+    <section class="py-6 sm:py-12 dark:bg-gray-800 dark:text-gray-100">
+            <div class="container p-6 mx-auto space-y-8">
+            <div class="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-4" id="card">
+            </div>
+        </div>
+    </section>
+
+    <script>
+      const card = document.getElementById("card");
+      let kod = '';
+      const regionSelect = document.getElementById("regionSelect");
+
+      async function getData(){
+          const fData = await fetch('data.json');
+          const jData = await fData.json();
+          print(jData);
+          countryOption(jData);
+      }
+      
+      function print(data){
+          data.forEach(country => {
+              kod +=`
+                <article class="flex flex-col dark:bg-gray-900">
+                  <a rel="noopener noreferrer" href="#" aria-label="Te nulla oportere reprimique his dolorum">
+                    <img alt="" class="object-cover w-full h-52 dark:bg-gray-500" src="${country.flags.svg}">
+                  </a>
+                  <div class="flex flex-col flex-1 p-6">
+                    <a rel="noopener noreferrer" href="#" aria-label="Te nulla oportere reprimique his dolorum"></a>
+                    <a rel="noopener noreferrer" href="#" class="text-xs tracki uppercase hover:underline dark:text-violet-400">${country.name}</a>
+                    <h3 class="flex-1 py-2 text-lg font-semibold leadi">Region : ${country.region}</h3>
+                    <h3 class="flex-1 py-2 text-lg font-semibold leadi">Population : ${country.population}</h3>
+                    <h3 class="flex-1 py-2 text-lg font-semibold leadi">Capital : ${country.capital}</h3>
+                    <div class="flex flex-wrap justify-between pt-3 space-x-2 text-xs dark:text-gray-400">
+                      <span>June 1, 2020</span>
+                      <span>2.1K views</span>
+                    </div>
+                  </div>
+                </article>`;
+          });
+          card.innerHTML = kod;
+      }
+
+      function countryOption(data) {
+          let uniqueRegions = [];
+          data.forEach(item => {
+              if (!uniqueRegions.includes(item.region)) {
+                  uniqueRegions.push(item.region);
+                  const option = document.createElement('option');
+                  option.text = item.region;
+                  option.value = item.region;
+                  regionSelect.add(option);
+              }
+          });
+
+          regionSelect.addEventListener('change', function() {
+              const selectedRegion = this.value;
+              const filteredData = data.filter(item => item.region === selectedRegion);
+              card.innerHTML = '';
+              print(filteredData);
+          });
+      }
+
+      getData();
+  </script>
+</body>
+</html>
